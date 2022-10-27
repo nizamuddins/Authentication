@@ -9,7 +9,8 @@ const session = require('express-session');
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const findOrCreate = require('mongoose-findorcreate')
+const findOrCreate = require('mongoose-findorcreate');
+const { use } = require('passport');
 
 // var encrypt = require('mongoose-encryption');
 // var md5 = require('md5'); 
@@ -111,7 +112,6 @@ app.get('/auth/google/secrets',
 
 app.get("/login", (req, res) => {
     sign = 0;
-
     res.render("login")
 })
 
@@ -128,7 +128,7 @@ app.get("/secrets", (req, res) => {
 
 // -------------
 app.post("/signup", async (req, res) => {
-UserName = req.body.username;
+// UserName = req.body.username;
     User.register({username:req.body.username, active: false}, req.body.password, function(err, user) {
         if (err) { 
             console.log(err);
@@ -142,16 +142,15 @@ UserName = req.body.username;
    
 })
 
-
 app.post("/login",  async(req, res) => {
-    UserName = req.body.username;
+    // UserName = req.body.username;
     let user = new User({
         username:req.body.username,
         password:req.body.password
     })
+
     req.login(user,(err)=>{
         if(err){
-            console.log(err)
             res.redirect('/login')
         }else{
             passport.authenticate("local")(req,res, ()=>{
